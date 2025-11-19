@@ -208,7 +208,7 @@ class AnalyticsManager:
 
 ## 🎬 시연 영상
 
-[여기에 시연 영상 링크 또는 GIF 추가]
+추가 예정
 
 ---
 
