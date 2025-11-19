@@ -262,7 +262,7 @@ plotly==5.17.0
 
 ## 👨‍💻 개발자
 
-**[Your Name]**  
+**[서재승]**  
 📧 Email: your.email@example.com  
 🔗 LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com)  
 💼 Portfolio: [yourportfolio.com](https://yourportfolio.com)
