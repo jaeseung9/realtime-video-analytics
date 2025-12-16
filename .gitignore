@@ -58,3 +58,7 @@ Thumbs.db
 *.pid
 *.seed
 *.pid.lock
+
+# Temporary files
+temp/
+

@@ -28,15 +28,36 @@ st.sidebar.title("⚙️ 설정")
 # 얼굴 검출 ON/OFF
 enable_face_detection = st.sidebar.checkbox("얼굴 검출 활성화", value=True)
 
-# 검출 감도 조절
+# 검출 파라미터 조절
 if enable_face_detection:
+    st.sidebar.subheader("🎯 검출 파라미터")
+    
     detection_sensitivity = st.sidebar.slider(
-        "검출 감도 (낮을수록 민감)", 
-        min_value=2, 
-        max_value=8, 
-        value=3,
-        help="값이 낮을수록 더 많은 얼굴을 검출하지만 오검출도 증가합니다"
+        "검출 엄격도 (minNeighbors)", 
+        min_value=3, 
+        max_value=10, 
+        value=5,
+        help="값이 높을수록 더 엄격하게 검출 (오검출 감소, 놓치는 얼굴 증가)"
     )
+    
+    with st.sidebar.expander("🔧 고급 설정"):
+        scale_factor = st.slider(
+            "Scale Factor",
+            min_value=1.05,
+            max_value=1.3,
+            value=1.1,
+            step=0.05,
+            help="이미지 크기 조정 비율 (낮을수록 정밀, 느림)"
+        )
+        
+        min_face_size = st.slider(
+            "최소 얼굴 크기 (픽셀)",
+            min_value=20,
+            max_value=100,
+            value=30,
+            step=10,
+            help="이보다 작은 얼굴은 무시"
+        )
 
 video_source_type = st.sidebar.radio(
     "비디오 소스 선택",
@@ -98,6 +119,10 @@ st.sidebar.divider()
 st.sidebar.markdown("**현재 설정:**")
 st.sidebar.write(f"- 소스: {video_source_type}")
 st.sidebar.write(f"- 얼굴 검출: {'ON' if enable_face_detection else 'OFF'}")
+if enable_face_detection:
+    st.sidebar.write(f"- 엄격도: {detection_sensitivity}")
+    st.sidebar.write(f"- Scale Factor: {scale_factor if 'scale_factor' in locals() else 1.1}")
+    st.sidebar.write(f"- 최소 크기: {min_face_size if 'min_face_size' in locals() else 30}px")
 st.sidebar.write(f"- FPS 제한: {fps_limit}")
 
 # 컨트롤 버튼
@@ -152,7 +177,18 @@ if st.session_state.running and video_source is not None:
             # 얼굴 검출
             faces = []
             if enable_face_detection and face_detector is not None:
-                faces = face_detector.detect_faces(frame, min_neighbors=detection_sensitivity)
+                # 고급 설정이 있으면 사용, 없으면 기본값
+                sf = scale_factor if 'scale_factor' in locals() else 1.1
+                mfs = min_face_size if 'min_face_size' in locals() else 30
+                
+                faces = face_detector.detect_faces(
+                frame,
+                min_neighbors=detection_sensitivity,
+                scale_factor=sf,
+                min_size=(mfs, mfs),
+                weight_threshold=2.5,
+                require_eye=True
+            )
                 total_faces += len(faces)
                 
                 # 얼굴 그리기
@@ -175,7 +211,7 @@ if st.session_state.running and video_source is not None:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
             
             # 화면에 표시
-            video_placeholder.image(frame_rgb, channels="RGB", use_container_width=True)
+            video_placeholder.image(frame_rgb, channels="RGB", width=1100)
             
             # 메트릭 업데이트
             with metrics_placeholder.container():
@@ -210,4 +246,4 @@ if temp_file_path and os.path.exists(temp_file_path):
         pass
 
 st.divider()
-st.info("💡 Step 2: 비디오에서 얼굴을 검출합니다.")
+st.info("💡 Tip: 오검출이 많으면 '검출 엄격도'를 높이고, 얼굴을 놓치면 낮추세요.")
