@@ -21,28 +21,6 @@
 
 ---
 
-## 🧩 시스템 아키텍처
-
-```mermaid
-flowchart TD
-  A[Webcam / Video file / YouTube URL] --> B[OpenCV VideoCapture]
-  B --> C[Frame Scheduler<br/>FPS Limit & Analysis Interval]
-  C --> D1[FaceDetector<br/>(Haar Cascade + eye verify)]
-  C --> D2[QualityAnalyzer<br/>Blur/Brightness/Noise/Freeze]
-  C --> D3[MetricsCollector<br/>FPS/CPU/Mem/Latency]
-
-  D1 --> E1[EmotionClassifier<br/>(현재: heuristic dummy)]
-  D2 --> F[AnalyticsManager<br/>MLflow + CSV logs]
-  D3 --> F
-
-  F --> G[Streamlit Dashboard]
-  E1 --> G
-  D2 --> G
-  D3 --> G
-```
-
----
-
 ## 📌 현재 구현 범위 (MVP)
 
 ### 1) Streamlit 대시보드 (`app.py`)
