@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # MLflow 추적 서버
+
   mlflow:
     image: python:3.11-slim
     container_name: mlflow-server
@@ -21,7 +21,6 @@ services:
     networks:
       - app-network
 
-  # Streamlit 앱
   app:
     build: .
     container_name: face-emotion-app
