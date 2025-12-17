@@ -9,7 +9,7 @@
 
 ---
 
-## ✨ 핵심 가치(이 프로젝트가 “좋은 이유”)
+## ✨ 핵심
 
 - **실시간 파이프라인을 한 화면에 통합**: 영상 스트림 + 품질 지표 + 감정 표시 + 시스템 메트릭(FPS/CPU/Mem)
 - **실험/로그 기반 개발 흐름**: MLflow 로깅 + CSV 시계열 저장으로 “데모 → 비교/분석”이 가능
@@ -18,28 +18,6 @@
 > ⚠️ **중요(정직한 현재 상태)**  
 > 현재 레포의 `EmotionClassifier` / `OCRPipeline`은 **더미(placeholder) 구현**이며,  
 > ONNX 감정모델 / EasyOCR / RandomForest 예측은 **다음 단계(로드맵)**로 설계되어 있습니다.
-
----
-
-## 🧩 시스템 아키텍처
-
-```mermaid
-flowchart TD
-  A[Webcam / Video file / YouTube URL] --> B[OpenCV VideoCapture]
-  B --> C[Frame Scheduler<br/>FPS Limit & Analysis Interval]
-  C --> D1[FaceDetector<br/>(Haar Cascade + eye verify)]
-  C --> D2[QualityAnalyzer<br/>Blur/Brightness/Noise/Freeze]
-  C --> D3[MetricsCollector<br/>FPS/CPU/Mem/Latency]
-
-  D1 --> E1[EmotionClassifier<br/>(현재: heuristic dummy)]
-  D2 --> F[AnalyticsManager<br/>MLflow + CSV logs]
-  D3 --> F
-
-  F --> G[Streamlit Dashboard]
-  E1 --> G
-  D2 --> G
-  D3 --> G
-```
 
 ---
 
@@ -91,7 +69,7 @@ flowchart TD
 - psutil
 - (옵션) `yt-dlp` (유튜브 입력 모드 사용 시)
 
-### 다음 단계(로드맵에 포함)
+### 다음 단계
 
 - ONNX Runtime (emotion-ferplus.onnx 등)
 - EasyOCR (텍스트 + confidence)
@@ -248,7 +226,3 @@ Streamlit 사이드바에서 실시간 조절:
 - MLflow + CSV로 “실험/로그 중심” 개발 구조를 적용하여 비교 가능한 분석 환경 구성
 
 ---
-
-## 라이선스
-
-학습/포트폴리오 목적 (추후 공개 시 LICENSE 추가 예정)
