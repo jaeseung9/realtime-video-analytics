@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # MLflow 추적 서버
+  mlflow:
+    image: python:3.11-slim
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+      - ./mlartifacts:/mlflow/mlartifacts
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=file:///mlflow/mlruns
+      - MLFLOW_ARTIFACT_ROOT=/mlflow/mlartifacts
+    command: >
+      sh -c "pip install mlflow==2.8.0 &&
+             mlflow server --host 0.0.0.0 
+             --backend-store-uri file:///mlflow/mlruns 
+             --default-artifact-root file:///mlflow/mlartifacts"
+    networks:
+      - app-network
+
+  # Streamlit 앱
+  app:
+    build: .
+    container_name: face-emotion-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./src:/app/src
+      - ./logs:/app/logs
+      - ./models:/app/models
+      - ./resources:/app/resources
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
